@@ -20,6 +20,11 @@ export async function obtenerProductosDisponibles() {
     return data
 }
 
+export async function obtenerProductoId(id: string) {
+    const [prod] = await db.select().from(productos).where(eq(productos.id, id));
+    return prod;
+}
+
 export async function setProductoVendido(id: string) {
     await db.update(productos).set({ disponible: false }).where(eq(productos.id, id))
 }
