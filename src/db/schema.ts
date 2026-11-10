@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, real } from "drizzle-orm/sqlite-core";
 
 export const productos = sqliteTable("productos", {
     id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -15,7 +15,8 @@ export const productos = sqliteTable("productos", {
     condicionBateria: integer("condicion_bateria"),
     procesador: text("procesador"),
     tipo: text("tipo", { enum: ["CELULAR", "TABLET", "LAPTOP", "CONSOLA", "RELOJ"], }).notNull(),
-    so: text("so", { enum: ["ANDROID", "IOS", "WINDOWS"], })
+    so: text("so", { enum: ["ANDROID", "IOS", "WINDOWS"], }),
+    precio: real("precio").notNull()
 });
 
 export type Producto = typeof productos.$inferSelect;

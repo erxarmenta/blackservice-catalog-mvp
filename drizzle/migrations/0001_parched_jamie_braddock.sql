@@ -1,0 +1,1 @@
+ALTER TABLE `productos` ADD `precio` real NOT NULL;
