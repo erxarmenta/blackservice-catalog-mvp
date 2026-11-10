@@ -20,8 +20,12 @@ export async function obtenerProductosDisponibles() {
     return data
 }
 
-export async function marcarProduct(id: string) {
+export async function setProductoVendido(id: string) {
     await db.update(productos).set({ disponible: false }).where(eq(productos.id, id))
+}
+
+export async function setProductoDisponible(id: string) {
+    await db.update(productos).set({ disponible: true }).where(eq(productos.id, id))
 }
 
 export async function editarProducto(id: string, data: updateData) {
