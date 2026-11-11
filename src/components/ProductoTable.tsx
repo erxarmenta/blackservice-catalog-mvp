@@ -9,27 +9,25 @@ const buttonBase = "rounded-lg px-3 py-1.5 text-xs font-medium text-white transi
 const detailLabelClass = "text-xs font-medium uppercase tracking-wide text-neutral-400";
 const detailValueClass = "mt-0.5 text-sm text-neutral-800";
 
-export default function ProductoTable() {
-    const [productos, setProductos] = useState<Producto[]>([]);
+const formatPrecio = (precio: number) =>
+    new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(precio);
+
+type Props = {
+    productos: Producto[];
+    onRefresh: () => void | Promise<void>;
+}
+
+export default function ProductoTable({ productos, onRefresh }: Props) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
-
-    const fetchProductos = async () => {
-        const data = await obtenerProductos();
-        setProductos(data);
-    };
-
-    useEffect(() => {
-        fetchProductos();
-    }, []);
 
     const marcarProductoVendido = async (id: string) => {
         await setProductoVendido(id);
-        fetchProductos();
+        await onRefresh();
     }
 
     const marcarProductoDisponible = async (id: string) => {
         await setProductoDisponible(id);
-        fetchProductos()
+        await onRefresh();
     }
 
     const toggleExpanded = (id: string) => {
@@ -45,6 +43,7 @@ export default function ProductoTable() {
                         <th className={thClass}>SKU</th>
                         <th className={thClass}>Marca</th>
                         <th className={thClass}>Modelo</th>
+                        <th className={thClass}>Precio</th>
                         <th className={thClass}>Tipo</th>
                         <th className={thClass}>Estado</th>
                         <th className={thClass}>Disponibilidad</th>
@@ -72,6 +71,7 @@ export default function ProductoTable() {
                                     <td className={`${tdClass} font-medium text-neutral-900`}>{producto.sku}</td>
                                     <td className={tdClass}>{producto.marca}</td>
                                     <td className={tdClass}>{producto.modelo}</td>
+                                    <td className={`${tdClass} font-semibold text-neutral-900`}>{formatPrecio(producto.precio)}</td>
                                     <td className={tdClass}>{producto.tipo}</td>
                                     <td className={tdClass}>
                                         <span className="inline-flex rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
@@ -100,7 +100,7 @@ export default function ProductoTable() {
                                 </tr>
                                 {isExpanded && (
                                     <tr className="bg-neutral-50/80">
-                                        <td colSpan={8} className="px-4 py-4 sm:px-6">
+                                        <td colSpan={9} className="px-4 py-4 sm:px-6">
                                             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                                                 <div>
                                                     <p className={detailLabelClass}>Almacenamiento</p>
@@ -145,7 +145,7 @@ export default function ProductoTable() {
                     })}
                     {productos.length === 0 && (
                         <tr>
-                            <td colSpan={8} className="px-4 py-10 text-center text-sm text-neutral-400">
+                            <td colSpan={9} className="px-4 py-10 text-center text-sm text-neutral-400">
                                 No hay productos registrados.
                             </td>
                         </tr>

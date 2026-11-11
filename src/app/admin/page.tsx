@@ -1,5 +1,4 @@
-import ProductoForm from "@/components/ProductoForm";
-import ProductoTable from "@/components/ProductoTable";
+import AdminCatalogo from "@/components/AdminCatalogo";
 
 export default function AdminPage() {
   return (
@@ -14,14 +13,7 @@ export default function AdminPage() {
           </p>
         </header>
 
-        <ProductoForm />
-
-        <section className="flex w-full flex-col gap-3">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
-            Inventario
-          </h2>
-          <ProductoTable />
-        </section>
+        <AdminCatalogo />
       </div>
     </main>
   )

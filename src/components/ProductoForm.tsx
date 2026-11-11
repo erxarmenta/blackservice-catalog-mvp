@@ -8,14 +8,18 @@ const labelClass = "text-xs font-medium uppercase tracking-wide text-neutral-500
 const errorClass = "text-xs text-red-500"
 const sectionTitleClass = "text-sm font-semibold text-neutral-900"
 
-export default function ProductoForm() {
+type Props = {
+    onSuccess?: () => void | Promise<void>;
+}
+
+export default function ProductoForm({ onSuccess }: Props) {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<NuevoProducto>();
 
     const addProduct = async (data: NuevoProducto) => {
         console.log("Agregando producto...", data)
         await agregarProducto(data);
         reset();
-        obtenerProductos();
+        await onSuccess?.();
     };
 
     return (
@@ -31,7 +35,7 @@ export default function ProductoForm() {
             <div className="flex flex-col gap-8">
                 <section className="flex flex-col gap-4">
                     <h3 className={sectionTitleClass}>Identificación</h3>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Tipo</label>
                             <select className={fieldClass} {...register("tipo", { required: "Es necesario un tipo de producto" })}>
@@ -60,6 +64,22 @@ export default function ProductoForm() {
                             <label className={labelClass}>Modelo</label>
                             <input type="text" className={fieldClass} {...register("modelo", { required: "Es necesario ingresar el modelo del dispositivo" })} />
                             {errors.modelo && <span className={errorClass}>{errors.modelo.message}</span>}
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                            <label className={labelClass}>Precio</label>
+                            <input
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                className={fieldClass}
+                                {...register("precio", {
+                                    required: "Es necesario ingresar el precio del dispositivo",
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "El precio no puede ser negativo" },
+                                })}
+                            />
+                            {errors.precio && <span className={errorClass}>{errors.precio.message}</span>}
                         </div>
                     </div>
                 </section>

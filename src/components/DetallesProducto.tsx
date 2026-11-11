@@ -21,16 +21,11 @@ export default function DetallesProducto() {
 
     return (
         <main className="p-3 m-3">
-            <header>
-                <button>Regresar al catalógo</button>
-            </header>
-            <section className="flex flex-row place-content-evenly">
-                <div>Fotos</div>
-                <div>
-                    <span>{actualProd?.marca}</span>
-                    <h2>{actualProd?.modelo}</h2>
-                </div>
-            </section>
+            {
+                actualProd?.disponible ?
+                    <pre>{JSON.stringify(actualProd, null, 2)}</pre> :
+                    <p>Este producto ya no esta disponible.</p>
+            }
         </main>
     )
 }
