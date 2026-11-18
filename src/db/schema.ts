@@ -16,7 +16,8 @@ export const productos = sqliteTable("productos", {
     procesador: text("procesador"),
     tipo: text("tipo", { enum: ["CELULAR", "TABLET", "LAPTOP", "CONSOLA", "RELOJ"], }).notNull(),
     so: text("so", { enum: ["ANDROID", "IOS", "WINDOWS"], }),
-    precio: real("precio").notNull()
+    precio: real("precio").notNull(),
+    imagenUrl: text("imagen_url").notNull()
 });
 
 export type Producto = typeof productos.$inferSelect;

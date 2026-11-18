@@ -1,9 +1,10 @@
 "use client"
 import { type NuevoProducto } from "@/db/schema"
 import { useForm } from "react-hook-form"
-import { agregarProducto, obtenerProductos } from "@/app/actions"
+import { agregarProducto } from "@/app/actions"
 
 const fieldClass = "w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+const textFieldClass = `${fieldClass} uppercase`
 const labelClass = "text-xs font-medium uppercase tracking-wide text-neutral-500"
 const errorClass = "text-xs text-red-500"
 const sectionTitleClass = "text-sm font-semibold text-neutral-900"
@@ -14,6 +15,10 @@ type Props = {
 
 export default function ProductoForm({ onSuccess }: Props) {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<NuevoProducto>();
+
+    const uppercaseConfig = {
+        setValueAs: (value: string) => value.toUpperCase()
+    }
 
     const addProduct = async (data: NuevoProducto) => {
         console.log("Agregando producto...", data)
@@ -56,13 +61,13 @@ export default function ProductoForm({ onSuccess }: Props) {
 
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Marca</label>
-                            <input type="text" className={fieldClass} {...register("marca", { required: "Es necesario ingresar la marca del dispositivo" })} />
+                            <input type="text" className={textFieldClass} {...register("marca", { required: "Es necesario ingresar la marca del dispositivo", ...uppercaseConfig })} />
                             {errors.marca && <span className={errorClass}>{errors.marca.message}</span>}
                         </div>
 
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Modelo</label>
-                            <input type="text" className={fieldClass} {...register("modelo", { required: "Es necesario ingresar el modelo del dispositivo" })} />
+                            <input type="text" className={textFieldClass} {...register("modelo", { required: "Es necesario ingresar el modelo del dispositivo", ...uppercaseConfig })} />
                             {errors.modelo && <span className={errorClass}>{errors.modelo.message}</span>}
                         </div>
 
@@ -89,7 +94,7 @@ export default function ProductoForm({ onSuccess }: Props) {
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Color</label>
-                            <input type="text" className={fieldClass} {...register("color", { required: "Es necesario indicar el color del dispositivo" })} />
+                            <input type="text" className={textFieldClass} {...register("color", { required: "Es necesario indicar el color del dispositivo", ...uppercaseConfig })} />
                             {errors.color && <span className={errorClass}>{errors.color.message}</span>}
                         </div>
 
@@ -101,12 +106,12 @@ export default function ProductoForm({ onSuccess }: Props) {
 
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Memoria RAM</label>
-                            <input type="text" className={fieldClass} {...register("ram")} />
+                            <input type="text" className={textFieldClass} {...register("ram", uppercaseConfig)} />
                         </div>
 
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Procesador</label>
-                            <input type="text" className={fieldClass} {...register("procesador")} />
+                            <input type="text" className={textFieldClass} {...register("procesador", uppercaseConfig)} />
                         </div>
 
                         <div className="flex flex-col gap-1.5">
@@ -117,6 +122,10 @@ export default function ProductoForm({ onSuccess }: Props) {
                                 <option value="IOS">IOS</option>
                             </select>
                         </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className={labelClass}>Imagen</label>
+                        <input type="text" className={fieldClass} {...register("imagenUrl")} />
                     </div>
                 </section>
 

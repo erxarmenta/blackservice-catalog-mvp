@@ -1,6 +1,6 @@
 "use client";
-import { Fragment, useEffect, useState } from 'react';
-import { obtenerProductos, setProductoVendido, setProductoDisponible } from '@/app/actions';
+import { Fragment, useState } from 'react';
+import { setProductoVendido, setProductoDisponible } from '@/app/actions';
 import { type Producto } from '@/db/schema';
 
 const thClass = "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500";
@@ -8,6 +8,7 @@ const tdClass = "px-4 py-3 text-sm text-neutral-700 whitespace-nowrap";
 const buttonBase = "rounded-lg px-3 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2";
 const detailLabelClass = "text-xs font-medium uppercase tracking-wide text-neutral-400";
 const detailValueClass = "mt-0.5 text-sm text-neutral-800";
+const imageButton = "inline-flex items-center justify-center rounded-full border border-indigo-600 bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus-visible:ring-4 focus-visible:ring-indigo-200 focus-visible:outline-hidden"
 
 const formatPrecio = (precio: number) =>
     new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(precio);
@@ -135,6 +136,9 @@ export default function ProductoTable({ productos, onRefresh }: Props) {
                                                     <p className={`${detailValueClass} whitespace-normal`}>
                                                         {producto.observaciones?.trim() ? producto.observaciones : "Sin observaciones"}
                                                     </p>
+                                                </div>
+                                                <div className="col-span-2 sm:col-span-4 mt-2">
+                                                    <a className={imageButton} href={producto.imagenUrl} target="_blank" rel="noopener noreferrer">Ver Imagen</a>
                                                 </div>
                                             </div>
                                         </td>

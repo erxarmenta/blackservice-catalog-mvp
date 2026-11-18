@@ -15,6 +15,13 @@
       "when": 1794291426599,
       "tag": "0001_parched_jamie_braddock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1794978461849,
+      "tag": "0002_married_master_chief",
+      "breakpoints": true
     }
   ]
 }
