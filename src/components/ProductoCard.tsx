@@ -45,7 +45,7 @@ export default function ProductoCard({ prod }: { prod: Producto }) {
 
                 <button
                     type="button"
-                    className="mt-auto w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800"
+                    className="mt-auto w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 cursor-pointer"
                     onClick={() => router.push(`/catalogo/${prod.id}`)}
                 >
                     Ver detalles

@@ -2,6 +2,7 @@
 import { type NuevoProducto } from "@/db/schema"
 import { useForm } from "react-hook-form"
 import { agregarProducto } from "@/app/actions"
+import toast from "react-hot-toast"
 
 const fieldClass = "w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
 const textFieldClass = `${fieldClass} uppercase`
@@ -21,10 +22,16 @@ export default function ProductoForm({ onSuccess }: Props) {
     }
 
     const addProduct = async (data: NuevoProducto) => {
-        console.log("Agregando producto...", data)
-        await agregarProducto(data);
-        reset();
-        await onSuccess?.();
+        const toastId = toast.loading("Agregango producto...")
+        try {
+            await agregarProducto(data);
+            reset()
+            await onSuccess?.();
+            toast.success("Producto agregado correctamente", { id: toastId })
+        } catch (error) {
+            console.error(error);
+            toast.error("Ocurrio un error al agregar el producto", { id: toastId })
+        }
     };
 
     return (
