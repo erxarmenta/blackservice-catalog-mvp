@@ -13,8 +13,10 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.7.25",
     "@imagekit/next": "^2.1.6",
     "@libsql/client": "^0.18.0",
+    "better-auth": "^1.7.25",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.5",
     "react": "19.3.0",
