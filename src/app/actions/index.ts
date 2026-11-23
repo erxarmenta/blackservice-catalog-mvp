@@ -3,14 +3,17 @@
 import { db } from "@/db";
 import { productos, type NuevoProducto, type Producto } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "@/lib/dal";
 
 type updateData = Omit<Producto, 'id'>
 
 export async function agregarProducto(data: NuevoProducto) {
+    await requireAdmin()
     await db.insert(productos).values(data);
 }
 
 export async function obtenerProductos() {
+    await requireAdmin()
     const data = await db.select().from(productos)
     return data
 }
@@ -26,17 +29,21 @@ export async function obtenerProductoId(id: string) {
 }
 
 export async function setProductoVendido(id: string) {
+    await requireAdmin()
     await db.update(productos).set({ disponible: false }).where(eq(productos.id, id))
 }
 
 export async function setProductoDisponible(id: string) {
+    await requireAdmin()
     await db.update(productos).set({ disponible: true }).where(eq(productos.id, id))
 }
 
 export async function editarProducto(id: string, data: updateData) {
+    await requireAdmin()
     await db.update(productos).set(data).where(eq(productos.id, id))
 }
 
 export async function borrarProducto(id: string) {
+    await requireAdmin()
     await db.delete(productos).where(eq(productos.id, id))
 }

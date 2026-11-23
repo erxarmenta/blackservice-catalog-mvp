@@ -19,5 +19,8 @@ export const auth = betterAuth({
         expiresIn: 60 * 60 * 24 * 7,
         updateAge: 60 * 60 * 24
     },
-    plugins: [nextCookies()]
+    plugins: [nextCookies()],
+    rateLimit: {
+        storage: "database",
+    },
 })
