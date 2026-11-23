@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { productos, type NuevoProducto, type Producto } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/dal";
+import toast from "react-hot-toast";
 
 type updateData = Omit<Producto, 'id'>
 

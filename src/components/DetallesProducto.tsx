@@ -36,13 +36,13 @@ export default function DetallesProducto() {
             { label: "Almacenamiento", value: `${actualProd.almacenamiento} GB` },
             { label: "Color", value: actualProd.color },
             { label: "Estado", value: actualProd.estado },
-            ...(actualProd.estetica != null
+            ...(actualProd.estetica
                 ? [{ label: "Estética", value: `${actualProd.estetica}/10` }]
                 : []),
-            ...(actualProd.ram != null || actualProd.ram != ""
+            ...(actualProd.ram
                 ? [{ label: "RAM", value: `${actualProd.ram} GB` }]
                 : []),
-            ...(actualProd.condicionBateria != null
+            ...(actualProd.condicionBateria
                 ? [{ label: "Batería", value: `${actualProd.condicionBateria}%` }]
                 : []),
             ...(actualProd.procesador
@@ -122,7 +122,7 @@ export default function DetallesProducto() {
                                     </div>
 
                                     <p className="text-3xl font-semibold tracking-tight text-neutral-900">
-                                        {formatPrice(actualProd.precio)}
+                                        {formatPrice(actualProd.precioContado)}
                                     </p>
 
                                     <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
@@ -145,12 +145,12 @@ export default function DetallesProducto() {
                                         </div>
                                     )}
 
-                                    <button
+                                    {/* <button
                                         type="button"
                                         className="mt-auto w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 sm:w-auto"
                                     >
                                         Contactar
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         </section>

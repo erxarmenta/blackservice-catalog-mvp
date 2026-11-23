@@ -1,7 +1,8 @@
 "use client"
-import { type NuevoProducto } from "@/db/schema"
+import { useEffect } from "react"
+import { type NuevoProducto, type Producto } from "@/db/schema"
 import { useForm } from "react-hook-form"
-import { agregarProducto } from "@/app/actions"
+import { agregarProducto, editarProducto } from "@/app/actions"
 import toast from "react-hot-toast"
 
 const fieldClass = "w-full rounded-lg border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
@@ -11,43 +12,59 @@ const errorClass = "text-xs text-red-500"
 const sectionTitleClass = "text-sm font-semibold text-neutral-900"
 
 type Props = {
+    productoEditar?: Producto | null;
     onSuccess?: () => void | Promise<void>;
+    onCancelEdit?: () => void;
 }
 
-export default function ProductoForm({ onSuccess }: Props) {
+export default function ProductoForm({ productoEditar, onSuccess, onCancelEdit }: Props) {
+    const isEditing = !!productoEditar;
     const { register, handleSubmit, formState: { errors }, reset } = useForm<NuevoProducto>();
 
+    useEffect(() => {
+        if (productoEditar) {
+            reset(productoEditar);
+        } else {
+            reset();
+        }
+    }, [productoEditar, reset]);
+
     const uppercaseConfig = {
-        setValueAs: (value: string) => value.toUpperCase()
+        setValueAs: (value: unknown) => typeof value === "string" ? value.toUpperCase() : value
     }
 
-    const addProduct = async (data: NuevoProducto) => {
-        const toastId = toast.loading("Agregango producto...")
+    const onSubmit = async (data: NuevoProducto) => {
+        const toastId = toast.loading(isEditing ? "Actualizando producto..." : "Agregando producto...")
         try {
-            await agregarProducto(data);
+            if (isEditing) {
+                await editarProducto(productoEditar.id, data as Omit<Producto, 'id'>);
+                toast.success("Producto actualizado correctamente", { id: toastId })
+            } else {
+                await agregarProducto(data);
+                toast.success("Producto agregado correctamente", { id: toastId })
+            }
             reset()
             await onSuccess?.();
-            toast.success("Producto agregado correctamente", { id: toastId })
         } catch (error) {
             console.error(error);
-            toast.error("Ocurrio un error al agregar el producto", { id: toastId })
+            toast.error(isEditing ? "Error al actualizar el producto" : "Error al agregar el producto", { id: toastId })
         }
     };
 
     return (
         <form
-            onSubmit={handleSubmit(addProduct)}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-full rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8"
         >
             <div className="mb-6">
-                <h2 className="text-lg font-semibold text-neutral-900">Agregar producto</h2>
-                <p className="mt-1 text-sm text-neutral-500">Completa los datos del dispositivo.</p>
+                <h2 className="text-lg font-semibold text-neutral-900">{isEditing ? "Editar producto" : "Agregar producto"}</h2>
+                <p className="mt-1 text-sm text-neutral-500">{isEditing ? "Modifica los datos del dispositivo." : "Completa los datos del dispositivo."}</p>
             </div>
 
             <div className="flex flex-col gap-8">
                 <section className="flex flex-col gap-4">
                     <h3 className={sectionTitleClass}>Identificación</h3>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         <div className="flex flex-col gap-1.5">
                             <label className={labelClass}>Tipo</label>
                             <select className={fieldClass} {...register("tipo", { required: "Es necesario un tipo de producto" })}>
@@ -77,21 +94,41 @@ export default function ProductoForm({ onSuccess }: Props) {
                             <input type="text" className={textFieldClass} {...register("modelo", { required: "Es necesario ingresar el modelo del dispositivo", ...uppercaseConfig })} />
                             {errors.modelo && <span className={errorClass}>{errors.modelo.message}</span>}
                         </div>
+                    </div>
+                </section>
 
+                <section className="flex flex-col gap-4">
+                    <h3 className={sectionTitleClass}>Precios</h3>
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         <div className="flex flex-col gap-1.5">
-                            <label className={labelClass}>Precio</label>
+                            <label className={labelClass}>Precio de Contado</label>
                             <input
                                 type="number"
                                 min={0}
                                 step="0.01"
                                 className={fieldClass}
-                                {...register("precio", {
-                                    required: "Es necesario ingresar el precio del dispositivo",
+                                {...register("precioContado", {
+                                    required: "Es necesario ingresar el precio de contado del dispositivo",
                                     valueAsNumber: true,
                                     min: { value: 0, message: "El precio no puede ser negativo" },
                                 })}
                             />
-                            {errors.precio && <span className={errorClass}>{errors.precio.message}</span>}
+                            {errors.precioContado && <span className={errorClass}>{errors.precioContado.message}</span>}
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                            <label className={labelClass}>Precio a Meses Sin Intereses (opcional)</label>
+                            <input
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                className={fieldClass}
+                                {...register("precioMsi", {
+                                    valueAsNumber: true,
+                                    min: { value: 0, message: "El precio no puede ser negativo" },
+                                })}
+                            />
+                            {errors.precioMsi && <span className={errorClass}>{errors.precioMsi.message}</span>}
                         </div>
                     </div>
                 </section>
@@ -112,12 +149,12 @@ export default function ProductoForm({ onSuccess }: Props) {
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                            <label className={labelClass}>Memoria RAM</label>
+                            <label className={labelClass}>Memoria RAM (opcional)</label>
                             <input type="text" className={textFieldClass} {...register("ram", uppercaseConfig)} />
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                            <label className={labelClass}>Procesador</label>
+                            <label className={labelClass}>Procesador (opcional)</label>
                             <input type="text" className={textFieldClass} {...register("procesador", uppercaseConfig)} />
                         </div>
 
@@ -149,12 +186,12 @@ export default function ProductoForm({ onSuccess }: Props) {
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                            <label className={labelClass}>Estética</label>
+                            <label className={labelClass}>Estética (opcional)</label>
                             <input type="number" min={8} max={10} className={fieldClass} {...register("estetica")} />
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                            <label className={labelClass}>Condición de batería</label>
+                            <label className={labelClass}>Condición de batería (Opcional)</label>
                             <input type="number" className={fieldClass} {...register("condicionBateria")} />
                         </div>
                     </div>
@@ -172,8 +209,17 @@ export default function ProductoForm({ onSuccess }: Props) {
                     type="submit"
                     className="w-full rounded-lg bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
                 >
-                    Agregar Producto
+                    {isEditing ? "Guardar Cambios" : "Agregar Producto"}
                 </button>
+                {isEditing && (
+                    <button
+                        type="button"
+                        onClick={() => { reset(); onCancelEdit?.(); }}
+                        className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2"
+                    >
+                        Cancelar
+                    </button>
+                )}
             </div>
         </form>
     )

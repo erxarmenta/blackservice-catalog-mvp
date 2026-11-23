@@ -36,6 +36,20 @@
       "when": 1795390783094,
       "tag": "0004_loving_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1795397721357,
+      "tag": "0005_glossy_magus",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795399376876,
+      "tag": "0006_graceful_groot",
+      "breakpoints": true
     }
   ]
 }

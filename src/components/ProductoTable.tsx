@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useState } from 'react';
-import { setProductoVendido, setProductoDisponible } from '@/app/actions';
+import { setProductoVendido, setProductoDisponible, borrarProducto } from '@/app/actions';
 import { type Producto } from '@/db/schema';
 
 const thClass = "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500";
@@ -16,18 +16,31 @@ const formatPrecio = (precio: number) =>
 type Props = {
     productos: Producto[];
     onRefresh: () => void | Promise<void>;
+    onEdit: (producto: Producto) => void;
 }
 
-export default function ProductoTable({ productos, onRefresh }: Props) {
+export default function ProductoTable({ productos, onRefresh, onEdit }: Props) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    const marcarProductoVendido = async (id: string) => {
+    const marcarProductoVendido = async (id: string, nombre: string) => {
+        const continueAction = confirm(`¿Desea marcar como vendido el siguiente producto: ${nombre}?`);
+        if (!continueAction) return;
         await setProductoVendido(id);
         await onRefresh();
     }
 
-    const marcarProductoDisponible = async (id: string) => {
+    const marcarProductoDisponible = async (id: string, nombre: string) => {
+        const continueAction = confirm(`¿Desea marcar como disponible el siguiente producto: ${nombre}?`);
+        if (!continueAction) return;
+
         await setProductoDisponible(id);
+        await onRefresh();
+    }
+
+    const eliminarProducto = async (id: string, nombre: string) => {
+        const continueAction = confirm(`¿Desea eliminar el siguiente producto: ${nombre}?`);
+        if (!continueAction) return;
+        await borrarProducto(id);
         await onRefresh();
     }
 
@@ -44,7 +57,8 @@ export default function ProductoTable({ productos, onRefresh }: Props) {
                         <th className={thClass}>SKU</th>
                         <th className={thClass}>Marca</th>
                         <th className={thClass}>Modelo</th>
-                        <th className={thClass}>Precio</th>
+                        <th className={thClass}>Precio Contado</th>
+                        <th className={thClass}>Precio MSI</th>
                         <th className={thClass}>Tipo</th>
                         <th className={thClass}>Estado</th>
                         <th className={thClass}>Disponibilidad</th>
@@ -72,7 +86,8 @@ export default function ProductoTable({ productos, onRefresh }: Props) {
                                     <td className={`${tdClass} font-medium text-neutral-900`}>{producto.sku}</td>
                                     <td className={tdClass}>{producto.marca}</td>
                                     <td className={tdClass}>{producto.modelo}</td>
-                                    <td className={`${tdClass} font-semibold text-neutral-900`}>{formatPrecio(producto.precio)}</td>
+                                    <td className={`${tdClass} font-semibold text-neutral-900`}>{formatPrecio(producto.precioContado)}</td>
+                                    <td className={`${tdClass} font-semibold text-neutral-900`}>{producto.precioMsi ? formatPrecio(producto.precioMsi) : "N/A"}</td>
                                     <td className={tdClass}>{producto.tipo}</td>
                                     <td className={tdClass}>
                                         <span className="inline-flex rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
@@ -89,12 +104,12 @@ export default function ProductoTable({ productos, onRefresh }: Props) {
                                     </td>
                                     <td className={tdClass}>
                                         <div className="flex flex-col gap-1.5">
-                                            <button type="button" className={`${buttonBase} bg-red-500 hover:bg-red-600 focus:ring-red-500`}>Eliminar</button>
-                                            <button type="button" className={`${buttonBase} bg-green-500 hover:bg-green-600 focus:ring-green-500`}>Editar</button>
+                                            <button type="button" className={`${buttonBase} bg-red-500 hover:bg-red-600 focus:ring-red-500`} onClick={() => eliminarProducto(producto.id, producto.modelo)}>Eliminar</button>
+                                            <button type="button" className={`${buttonBase} bg-green-500 hover:bg-green-600 focus:ring-green-500`} onClick={() => onEdit(producto)}>Editar</button>
                                             {
                                                 producto.disponible ?
-                                                    <button type="button" className={`${buttonBase} bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500`} onClick={() => marcarProductoVendido(producto.id)}>Vendido</button> :
-                                                    <button type="button" className={`${buttonBase} bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500`} onClick={() => marcarProductoDisponible(producto.id)}>Disponible</button>
+                                                    <button type="button" className={`${buttonBase} bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500`} onClick={() => marcarProductoVendido(producto.id, producto.modelo)}>Vendido</button> :
+                                                    <button type="button" className={`${buttonBase} bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500`} onClick={() => marcarProductoDisponible(producto.id, producto.modelo)}>Disponible</button>
                                             }
                                         </div>
                                     </td>

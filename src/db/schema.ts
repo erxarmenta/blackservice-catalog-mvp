@@ -16,7 +16,8 @@ export const productos = sqliteTable("productos", {
     procesador: text("procesador"),
     tipo: text("tipo", { enum: ["CELULAR", "TABLET", "LAPTOP", "CONSOLA", "RELOJ"], }).notNull(),
     so: text("so", { enum: ["ANDROID", "IOS", "WINDOWS"], }),
-    precio: real("precio").notNull(),
+    precioContado: real("precio_contado").notNull(),
+    precioMsi: real("precio_msi"),
     imagenUrl: text("imagen_url").notNull()
 });
 

@@ -35,7 +35,7 @@ export default function ProductoCard({ prod }: { prod: Producto }) {
                         <dt className="text-neutral-500">Estado</dt>
                         <dd className="font-medium text-neutral-900">{prod.estado}</dd>
                     </div>
-                    {prod.estetica != null && (
+                    {Boolean(prod.estetica) && (
                         <div>
                             <dt className="text-neutral-500">Estética</dt>
                             <dd className="font-medium text-neutral-900">{prod.estetica}/10</dd>
