@@ -124,7 +124,8 @@ export default function ProductoForm({ productoEditar, onSuccess, onCancelEdit }
                                 step="0.01"
                                 className={fieldClass}
                                 {...register("precioMsi", {
-                                    valueAsNumber: true,
+                                    setValueAs: (value) =>
+                                        value === "" ? null : Number(value),
                                     min: { value: 0, message: "El precio no puede ser negativo" },
                                 })}
                             />
